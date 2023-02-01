@@ -1,0 +1,268 @@
+DISCONNECTED====>
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Configuration;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+namespace EmployeeUsingDisconnect
+{
+    public partial class frmEmployees : Form
+    {
+        public frmEmployees()
+        {
+            InitializeComponent();
+        }
+	
+        MySqlDataAdapter DA;
+        MySqlCommandBuilder CMD_BLD;
+        DataSet DS;
+        int currentindex = 0;
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            txtBoxId.Enabled = false;
+            CN = new MySqlConnection();
+            DA = new MySqlDataAdapter("select * from employees", CN);
+            CMD_BLD = new MySqlCommandBuilder(DA);
+            DS = new DataSet();
+            DA.Fill(DS, "employees");
+            Navigation(currentindex);
+            // dataGridView1.DataSource = DS.Tables[0];
+        }
+        private void Navigation(int index)
+        {
+            if (DS.Tables[0].Rows.Count > 0)
+            {
+                txtBoxId.Text = DS.Tables[0].Rows[index]["employeeId"].ToString();
+                txtBName.Text = DS.Tables[0].Rows[index]["employeeName"].ToString();
+                txtBCity.Text = DS.Tables[0].Rows[index]["City"].ToString();
+            }
+        }
+
+        private void btn_First_Click(object sender, EventArgs e)
+        {
+            currentindex = 0;
+            Navigation(currentindex);
+        }
+
+        private void btn_Last_Click(object sender, EventArgs e)
+        {
+            currentindex = DS.Tables[0].Rows.Count - 1;
+            Navigation(currentindex);
+        }
+
+        private void btn_Prev_Click(object sender, EventArgs e)
+        {
+            if (currentindex > 0)
+            {
+                currentindex--;
+                Navigation(currentindex);
+            }
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            if (currentindex < DS.Tables[0].Rows.Count - 1)
+            {
+                currentindex++;
+                Navigation(currentindex);
+            }
+        }
+
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            txtBoxId.Text = string.Empty;
+            txtBName.Text = string.Empty;
+            txtBCity.Text = string.Empty;
+            txtName.Focus();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            DataRow row = DS.Tables[0].NewRow();
+            row["employeeName"] = txtBName.Text;
+            row["City"] = txtBCity.Text;
+            DS.Tables[0].Rows.Add(row);
+            DA.Update(DS.Tables[0]);
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            DataRow row = DS.Tables[0].Rows[currentindex];
+            row[1] = txtBName.Text;
+            row[2] = txtBCity.Text;
+            DA.Update(DS.Tables[0]);
+        }
+
+    }
+}
+=====================================================================================================
+
+connected madhe 
+
+
+dal folder madhe
+using MySql.Data.MySqlClient;
+using System;
+using System.Configuration;
+using System.Data;
+using EmployeeCrudeAppUsingConnector.Models;
+namespace EmployeeCrudeAppUsingConnector.Dal
+{
+    public class EmployeeDal
+    {
+        public DataTable GetAllEmployees() 
+        {
+            try
+            {
+                using (MySqlConnection CN = new MySqlConnection(ConfigurationManager.ConnectionStrings["grp35conn"].ConnectionString))
+                {
+                    CN.Open();
+                    using (MySqlCommand CMD = new MySqlCommand())
+                    {
+                        CMD.Connection = CN;
+                        CMD.CommandType = CommandType.StoredProcedure;
+                        CMD.CommandText = "GetAllEmployees";
+                        MySqlDataReader DR = CMD.ExecuteReader(CommandBehavior.SequentialAccess);
+                        DataTable DT = new DataTable();
+                        DT.Load(DR);
+                        CN.Close();
+                        return DT;
+                    }
+                 
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+        }
+        public int InsertNewEmployee(Employee employee) 
+        {
+            using (MySqlConnection CN = new MySqlConnection(ConfigurationManager.ConnectionStrings["grp35conn"].ConnectionString))
+            {
+                using(MySqlCommand CMD= new MySqlCommand())
+                {
+                    CN.Open();
+                    CMD.Connection = CN;    
+                    CMD.CommandType = CommandType.StoredProcedure;
+                    CMD.CommandText = "InsertEmployee";
+                    CMD.Parameters.AddWithValue("p_Name", employee.Name);
+                    CMD.Parameters.AddWithValue("p_City", employee.City);
+                    int result= CMD.ExecuteNonQuery();  
+                    if(result == 0)
+                    {
+                        return-1;
+                    }
+                    else
+                    {
+                        return result;
+                    }
+
+                }
+            }
+           
+        }
+    }
+}
+---------------------------------------------
+coonected model folder madhe
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EmployeeCrudeAppUsingConnector.Models
+{
+    internal class Employee
+    {
+        public int EmployeeId { get; set; }
+        public string Name { get; set; }
+        public string City { get; set; }
+    }
+}
+==============================================================
+
+app.config for both
+
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <startup> 
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8" />
+    </startup>
+	<connectionStrings>
+		<add name="grp35conn" connectionString="Data Source=localhost; Port=3306;Database=assign; User Id =root; Password=SIGMA@123sigma;" providerName="Mysql.Data.MySqlClient"/>
+	</connectionStrings>
+</configuration>
+
+=============================================================    
+
+connected add
+
+ public class EmployeeDal
+    {
+        public DataTable GetAllEmployees() 
+        {
+            try
+            {
+                using (MySqlConnection CN = new MySqlConnection(ConfigurationManager.ConnectionStrings["grp35conn"].ConnectionString))
+                {
+                    CN.Open();
+                    using (MySqlCommand CMD = new MySqlCommand())
+                    {
+                        CMD.Connection = CN;
+                        CMD.CommandType = CommandType.StoredProcedure;
+                        CMD.CommandText = "GetAllEmployees";
+                        MySqlDataReader DR = CMD.ExecuteReader(CommandBehavior.SequentialAccess);
+                        DataTable DT = new DataTable();
+                        DT.Load(DR);
+                        CN.Close();
+                        return DT;
+                    }
+                 
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+        }
+        public int InsertNewEmployee(Employee employee) 
+        {
+            using (MySqlConnection CN = new MySqlConnection(ConfigurationManager.ConnectionStrings["grp35conn"].ConnectionString))
+            {
+                using(MySqlCommand CMD= new MySqlCommand())
+                {
+                    CN.Open();
+                    CMD.Connection = CN;    
+                    CMD.CommandType = CommandType.StoredProcedure;
+                    CMD.CommandText = "InsertEmployee";
+                    CMD.Parameters.AddWithValue("p_Name", employee.Name);
+                    CMD.Parameters.AddWithValue("p_City", employee.City);
+                    int result= CMD.ExecuteNonQuery();  
+                    if(result == 0)
+                    {
+                        return-1;
+                    }
+                    else
+                    {
+                        return result;
+                    }
+
+                }
+            }
+           
+        }
+    }
+}

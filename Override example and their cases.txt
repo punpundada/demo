@@ -1,0 +1,85 @@
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace InheritanceAndPolymorphism
+{
+    internal class BasicMath
+    {
+        public virtual  int Square(int num)
+        {
+            return num * num;
+        }
+    }
+    internal class AdvanceMath : BasicMath
+    {
+        public new int Square(int num)
+        {
+            return (num * num) + 1000;
+        }
+    }
+}
+
+
+Main:
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace InheritanceAndPolymorphism
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            //DubaiSales dubaiSales = new DubaiSales();
+            //Console.WriteLine($"Sales Net Profit without GST is INR {dubaiSales.SalesNetProfit(12000, 13000, 150000)}");
+            //Console.WriteLine($"Sales Net Profit with GST is INR {dubaiSales.SalesNetProfit(12000, 13000, 150000, 18)}");
+            //Console.WriteLine($"Sales Net Profit with GST and transport is INR {dubaiSales.SalesNetProfit(12000, 13000, 150000, 18, 5000)}");                                                                                                                                                                                                                                                                                                                                                                                                                
+            //AdvanceMath advanceMath = new AdvanceMath();
+            //Console.WriteLine($"{advanceMath.Square(23)}");
+            //Console.ReadKey();
+
+
+            BasicMath b = new BasicMath();
+            b.Square(10);
+
+            AdvanceMath a = new AdvanceMath();
+            a.Square(2);
+
+            BasicMath b1 = new AdvanceMath();
+            b1.Square(100);
+
+            AdvanceMath a11 = new BasicMath();
+            a11.Square(20);
+
+
+
+
+
+        }
+    }
+}
+
+
+Try all cases with and without using virtual and override and new keyword
+
+1) virtual override
+
+2) virtual   new (empty)(dont write overrid)
+ 3) without virtual ,without override
+
+
+
+
+
+
